@@ -1,0 +1,46 @@
+%YAML 1.2
+---
+
+version: 1
+disable_existing_loggers: true
+
+root:
+  level: DEBUG
+  handlers: [ console ]
+  propagate: True
+
+loggers:
+  main:
+    handlers: [ console, file,  warn ]
+    propagate: False
+    level: DEBUG
+
+formatters:
+  simple:
+    format: "%(asctime)s [%(name)s] %(levelname)s - %(message)s"
+  detail:
+    format: "%(asctime)s [%(name)s] %(levelname)s - File: %(filename)s - %(funcName)s() - Line: %(lineno)d -  %(message)s"
+  colored:
+    (): coloredlogs.ColoredFormatter
+    format: "%(asctime)s [%(name)s] %(levelname)s - %(message)s"
+
+handlers:
+  console:
+    level: DEBUG
+    class: logging.StreamHandler
+    formatter: colored
+    stream: ext://sys.stderr
+  file:
+    class: logging.handlers.TimedRotatingFileHandler
+    level: INFO
+    formatter: simple
+    when: W0
+    backupCount: 4
+    filename: ./logs/all.log
+  warn:
+    class: logging.handlers.TimedRotatingFileHandler
+    level: WARNING
+    formatter: detail
+    when: W0
+    backupCount: 4
+    filename: ./logs/warn.log
